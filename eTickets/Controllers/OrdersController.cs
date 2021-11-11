@@ -51,6 +51,16 @@ namespace eTickets.Controllers
             if (item != null)
             {
                 _shoppingCart.AddItemToCart(item);
+
+                // New Relic Custom Event
+                var eventAttributes = new Dictionary<String, Object>();
+                eventAttributes.Add("ProductPrice", item.Price);
+                eventAttributes.Add("ProductType", "Movie");
+                eventAttributes.Add("ProductName", item.Name);
+                eventAttributes.Add("ProductCategory", item.MovieCategory);
+                eventAttributes.Add("ActionName", "Movie Added to Cart");
+
+                NewRelic.Api.Agent.NewRelic.RecordCustomEvent("MyCustomEvent", eventAttributes);
             }
             return RedirectToAction(nameof(ShoppingCart));
         }
